@@ -82,3 +82,33 @@ def mars_facts():
 
     browser.quit()
     return df.to_html(classes='table table-striped')
+
+def hemispheres():
+    # Set up Splinter
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
+    
+    # Visit Mars News Site
+    url = "https://marshemispheres.com/"
+    browser.visit(url)
+    time.sleep(1)
+
+    # Scrape page into Soup
+    html = browser.html
+    soup = bs(html, "html.parser")
+
+    hemisphere_image_urls = []
+
+    for i in range(4):
+
+        hemisphere = {}
+
+        browser.find_by_css('a.product-item h3')[i].click()
+        sample = browser.find_link_by_text('Sample').first
+        hemisphere['img_url'] = sample['href']
+
+        hemisphere['title'] = browser.find_by_css('h2.title').text
+        hemisphere_image_urls.append(hemisphere)
+
+        browser.back()
+    return hemisphere_image_urls
