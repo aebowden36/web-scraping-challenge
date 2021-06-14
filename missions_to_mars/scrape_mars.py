@@ -28,7 +28,6 @@ def scrape_news_info():
         news_p = initial.find('div', class_='article_teaser_body').get_text
     except AttributeError:
         return None, None
-    return news_title, news_p
 
     #store data in a dictionary
     mars_data = {"news title":news_title,"news paragraph":news_p}
@@ -47,7 +46,14 @@ def image():
     browser.visit(url)
     time.sleep(1)
 
+    # Scrape page into Soup
+    html = browser.html
+    soup = bs(html, "html.parser")
+
     try:
-        #something
+        image_url = soup.find('img', class_='fancybox-image').get('src')
     except AttributeError:
         return None
+
+    featured_image_url = f'https://spaceimages-mars.com/{image_url}'
+    browser.quit()
