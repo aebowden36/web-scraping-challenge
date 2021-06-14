@@ -1,6 +1,5 @@
 from splinter import Browser
 from bs4 import BeautifulSoup as bs
-import time
 import datetime as dt
 import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
@@ -13,7 +12,6 @@ def scrape_news_info(browser):
     # Visit Mars News Site
     url = "https://redplanetscience.com/"
     browser.visit(url)
-    time.sleep(1)
 
     # Scrape page into Soup
     html = browser.html
@@ -35,7 +33,6 @@ def image(browser):
     # Visit Mars News Site
     url = "https://spaceimages-mars.com/"
     browser.visit(url)
-    time.sleep(1)
 
     # Scrape page into Soup
     html = browser.html
@@ -64,7 +61,6 @@ def hemispheres(browser):
     # Visit Mars News Site
     url = "https://marshemispheres.com/"
     browser.visit(url)
-    time.sleep(1)
 
     hemisphere_image_urls = []
 
