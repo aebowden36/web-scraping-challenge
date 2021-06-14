@@ -112,3 +112,34 @@ def hemispheres():
 
         browser.back()
     return hemisphere_image_urls
+
+def scrape_hemisphere():
+    # Set up Splinter
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
+    
+    # Visit Mars News Site
+    url = "https://marshemispheres.com/"
+    browser.visit(url)
+    time.sleep(1)
+
+    # Scrape page into Soup
+    html = browser.html
+    soup = bs(html, "html.parser") 
+
+    try:
+        title = soup.find('h2', class_='title').get_text()
+        sample_element = soup.find('a', text='sample').get('href')
+    except AttributeError:
+        title = None
+        sample_element = None
+
+    hemispheres = {
+        'title': title,
+        'img_url': sample_element
+    }
+
+    return hemispheres
+
+if __name__ =="__main__":
+    print(scrape_all_info())
