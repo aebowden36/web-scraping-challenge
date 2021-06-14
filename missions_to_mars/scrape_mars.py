@@ -5,15 +5,14 @@ import datetime as dt
 import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
 
-def scrape_news_info():
-    # Set up Splinter
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
-    
+# Set executable path and initialize browser
+executable_path = {'executable_path': ChromeDriverManager().install()}
+browser = Browser('chrome', **executable_path, headless=False)
+
+def scrape_news_info(browser):
     # Visit Mars News Site
     url = "https://redplanetscience.com/"
     browser.visit(url)
-
     time.sleep(1)
 
     # Scrape page into Soup
@@ -29,19 +28,10 @@ def scrape_news_info():
         news_p = initial.find('div', class_='article_teaser_body').get_text
     except AttributeError:
         return None, None
-
-    #store data in a dictionary
-    mars_data = {"news title":news_title,"news paragraph":news_p}
     
-    # Quit the browser after scraping
-    browser.quit()
-    return mars_data
+    return news_title, news_p
 
-def image():
-    # Set up Splinter
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
-    
+def image(browser):
     # Visit Mars News Site
     url = "https://spaceimages-mars.com/"
     browser.visit(url)
@@ -57,22 +47,9 @@ def image():
         return None
 
     featured_image_url = f'https://spaceimages-mars.com/{image_url}'
-    browser.quit()
+    return featured_image_url
 
 def mars_facts():
-    # Set up Splinter
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
-    
-    # Visit Mars News Site
-    url = "https://galaxyfacts-mars.com/"
-    browser.visit(url)
-    time.sleep(1)
-
-    # Scrape page into Soup
-    html = browser.html
-    soup = bs(html, "html.parser")
-
     try:
         df = pd.read_html('https://galaxyfacts-mars.com/')[0]
     except BaseException:
@@ -81,22 +58,13 @@ def mars_facts():
     df.columns = ['Description', 'Mars', 'Earth']
     df.set_index('Description', inplace=True)
 
-    browser.quit()
     return df.to_html(classes='table table-striped')
 
-def hemispheres():
-    # Set up Splinter
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
-    
+def hemispheres(browser):
     # Visit Mars News Site
     url = "https://marshemispheres.com/"
     browser.visit(url)
     time.sleep(1)
-
-    # Scrape page into Soup
-    html = browser.html
-    soup = bs(html, "html.parser")
 
     hemisphere_image_urls = []
 
@@ -114,19 +82,9 @@ def hemispheres():
         browser.back()
     return hemisphere_image_urls
 
-def scrape_hemisphere():
-    # Set up Splinter
-    executable_path = {'executable_path': ChromeDriverManager().install()}
-    browser = Browser('chrome', **executable_path, headless=False)
-    
-    # Visit Mars News Site
-    url = "https://marshemispheres.com/"
-    browser.visit(url)
-    time.sleep(1)
+def scrape_hemisphere(html_text): 
 
-    # Scrape page into Soup
-    html = browser.html
-    soup = bs(html, "html.parser") 
+    soup = bs(html_text, "html.parser") 
 
     try:
         title = soup.find('h2', class_='title').get_text()
