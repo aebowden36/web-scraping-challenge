@@ -21,29 +21,32 @@ def scrape_news_info(browser):
         #find initial parent element
         initial = soup.select_one('div.list_text')
         # Get the news title
-        news_title = initial.find('div', class_='content_title').get_text
+        news_title = initial.find('div', class_='content_title').get_text()
         # Get the news paragraph text
-        news_p = initial.find('div', class_='article_teaser_body').get_text
+        news_p = initial.find('div', class_='article_teaser_body').get_text()
     except AttributeError:
         return None, None
     
     return news_title, news_p
 
 def image(browser):
-    # Visit Mars News Site
+    # Visit Image Site
     url = "https://spaceimages-mars.com/"
     browser.visit(url)
+
+    full_image = browser.find_by_tag('button')[1]
+    full_image.click()
 
     # Scrape page into Soup
     html = browser.html
     soup = bs(html, "html.parser")
 
     try:
-        image_url = soup.find('img', class_='fancybox-image').get('src')
+        img_url = soup.find('img', class_='fancybox-image').get('src')
     except AttributeError:
         return None
 
-    featured_image_url = f'https://spaceimages-mars.com/{image_url}'
+    featured_image_url = f'https://spaceimages-mars.com/{img_url}'
     return featured_image_url
 
 def mars_facts():
@@ -62,21 +65,24 @@ def hemispheres(browser):
     url = "https://marshemispheres.com/"
     browser.visit(url)
 
-    hemisphere_image_urls = []
+    hemi_img_urls = []
 
-    for i in range(4):
+    links = browser.find_by_css('a.product-item img')
 
+    for i in range(len(links)):
         hemisphere = {}
 
-        browser.find_by_css('a.product-item h3')[i].click()
-        sample = browser.find_link_by_text('Sample').first
+        browser.find_by_css('a.product-item img')[i].click()
+
+        sample = browser.links.find_by_text('Sample').first
         hemisphere['img_url'] = sample['href']
 
         hemisphere['title'] = browser.find_by_css('h2.title').text
-        hemisphere_image_urls.append(hemisphere)
+
+        hemi_img_urls.append(hemisphere)
 
         browser.back()
-    return hemisphere_image_urls
+    return hemi_img_urls
 
 def scrape_hemisphere(html_text): 
 
@@ -84,7 +90,7 @@ def scrape_hemisphere(html_text):
 
     try:
         title = soup.find('h2', class_='title').get_text()
-        sample_element = soup.find('a', text='sample').get('href')
+        sample_element = soup.find('a', text='Sample').get('href')
     except AttributeError:
         title = None
         sample_element = None
