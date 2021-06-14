@@ -1,6 +1,7 @@
 from splinter import Browser
 from bs4 import BeautifulSoup as bs
 import time
+import datetime as dt
 import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -140,6 +141,24 @@ def scrape_hemisphere():
     }
 
     return hemispheres
+
+def scrape_all_info():
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
+
+    news_title, news_p = scrape_news_info(browser)
+
+    info = {
+        'news_title': news_title,
+        'news_paragraph': news_p,
+        'featured_image': image(browser),
+        'mars_facts': mars_facts(),
+        'hemispheres': hemispheres(browser),
+        'timestamp': dt.datetime.now()
+    }
+
+    browser.quit()
+    return info
 
 if __name__ =="__main__":
     print(scrape_all_info())
