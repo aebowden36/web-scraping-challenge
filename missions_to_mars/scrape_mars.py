@@ -31,8 +31,23 @@ def scrape_news_info():
     return news_title, news_p
 
     #store data in a dictionary
-    mars_data = {"news title":news_title,
-                 "news paragraph":news_p}
+    mars_data = {"news title":news_title,"news paragraph":news_p}
     
     # Quit the browser after scraping
     browser.quit()
+    return mars_data
+
+def image():
+    # Set up Splinter
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
+    
+    # Visit Mars News Site
+    url = "https://spaceimages-mars.com/"
+    browser.visit(url)
+    time.sleep(1)
+
+    try:
+        #something
+    except AttributeError:
+        return None
