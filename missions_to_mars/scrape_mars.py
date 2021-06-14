@@ -57,3 +57,28 @@ def image():
 
     featured_image_url = f'https://spaceimages-mars.com/{image_url}'
     browser.quit()
+
+def mars_facts():
+    # Set up Splinter
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=False)
+    
+    # Visit Mars News Site
+    url = "https://galaxyfacts-mars.com/"
+    browser.visit(url)
+    time.sleep(1)
+
+    # Scrape page into Soup
+    html = browser.html
+    soup = bs(html, "html.parser")
+
+    try:
+        df = pd.read_html('https://galaxyfacts-mars.com/')[0]
+    except BaseException:
+        return None
+    
+    df.columns = ['Description', 'Mars', 'Earth']
+    df.set_index('Description', inplace=True)
+
+    browser.quit()
+    return df.to_html(classes='table table-striped')
